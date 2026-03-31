@@ -1,31 +1,18 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entity/todo.dart';
-import '../../domain/usecase/add_todo_usecase.dart';
-import '../../domain/usecase/delete_todo_usecase.dart';
-import '../../domain/usecase/get_todos_usecase.dart';
-import '../../domain/usecase/toggle_todo_usecase.dart';
+import '../../domain/usecase/todo_usecase.dart';
 import 'todo_list_state.dart';
 
 /// TodoList画面のViewModel
-/// - AsyncNotifier[TodoListState]: 非同期の初期ロードを表現
-/// - build()内でref.watchによりUseCaseを取得（DI）
-/// - BuildContextへの依存なし
 class TodoListViewModel extends AsyncNotifier<TodoListState> {
-  late final GetTodosUseCase _getTodosUseCase;
-  late final AddTodoUseCase _addTodoUseCase;
-  late final ToggleTodoUseCase _toggleTodoUseCase;
-  late final DeleteTodoUseCase _deleteTodoUseCase;
+  late final TodoUseCase _todoUseCase;
 
   @override
   Future<TodoListState> build() async {
-    // build()内でref.watchによりUseCaseを注入（依存関係が変わると自動再build）
-    _getTodosUseCase = ref.watch(getTodosUseCaseProvider);
-    _addTodoUseCase = ref.watch(addTodoUseCaseProvider);
-    _toggleTodoUseCase = ref.watch(toggleTodoUseCaseProvider);
-    _deleteTodoUseCase = ref.watch(deleteTodoUseCaseProvider);
+    _todoUseCase = ref.watch(todoUseCaseProvider);
 
-    final todos = await _getTodosUseCase.execute();
+    final todos = await _todoUseCase.getTodos();
     return TodoListState(todos: todos);
   }
 
@@ -42,8 +29,8 @@ class TodoListViewModel extends AsyncNotifier<TodoListState> {
 
     // Push-based更新: Loadingにせず即時UIを更新
     state = AsyncData(currentState.copyWith(isLoading: true));
-    await _addTodoUseCase.execute(newTodo);
-    final todos = await _getTodosUseCase.execute();
+    await _todoUseCase.addTodo(newTodo);
+    final todos = await _todoUseCase.getTodos();
     state = AsyncData(currentState.copyWith(todos: todos, isLoading: false));
   }
 
@@ -60,7 +47,7 @@ class TodoListViewModel extends AsyncNotifier<TodoListState> {
     }).toList();
     state = AsyncData(currentState.copyWith(todos: updatedTodos));
 
-    await _toggleTodoUseCase.execute(id);
+    await _todoUseCase.toggleTodo(id);
   }
 
   /// Todo削除
@@ -73,7 +60,7 @@ class TodoListViewModel extends AsyncNotifier<TodoListState> {
         currentState.todos.where((todo) => todo.id != id).toList();
     state = AsyncData(currentState.copyWith(todos: updatedTodos));
 
-    await _deleteTodoUseCase.execute(id);
+    await _todoUseCase.deleteTodo(id);
   }
 }
 
