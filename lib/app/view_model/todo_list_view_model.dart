@@ -2,18 +2,18 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entity/todo.dart';
 import '../../domain/usecase/todo_usecase.dart';
-import 'todo_list_state.dart';
+import '../view_data/todo_list_view_data.dart';
 
 /// TodoList画面のViewModel
-class TodoListViewModel extends AutoDisposeFamilyAsyncNotifier<TodoListState, String> {
+class TodoListViewModel extends AutoDisposeFamilyAsyncNotifier<TodoListViewData, String> {
   late final TodoUseCase _todoUseCase;
 
   @override
-  Future<TodoListState> build(String key) async {
+  Future<TodoListViewData> build(String key) async {
     _todoUseCase = ref.watch(todoUseCaseProvider(key));
 
     final todos = await _todoUseCase.getTodos();
-    return TodoListState(todos: todos);
+    return TodoListViewData(todos: todos);
   }
 
   /// Todo追加
@@ -62,6 +62,6 @@ class TodoListViewModel extends AutoDisposeFamilyAsyncNotifier<TodoListState, St
 }
 
 final todoListViewModelProvider = AsyncNotifierProvider.autoDispose
-    .family<TodoListViewModel, TodoListState, String>(
+    .family<TodoListViewModel, TodoListViewData, String>(
   TodoListViewModel.new,
 );
