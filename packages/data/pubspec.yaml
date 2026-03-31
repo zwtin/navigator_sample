@@ -1,0 +1,17 @@
+name: data
+publish_to: 'none'
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  domain:
+    path: ../domain
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+  uuid: ^4.5.3
+
+dev_dependencies:
+  freezed: ^3.0.6
+  json_serializable: ^6.9.5
+  build_runner: ^2.4.15

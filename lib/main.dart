@@ -1,12 +1,16 @@
+import 'package:app/app.dart';
+import 'package:data/data.dart';
+import 'package:domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'core/router/app_router.dart';
 
 void main() {
   runApp(
-    // ProviderScope: Riverpodの全Providerを管理するルートWidget
-    const ProviderScope(
-      child: App(),
+    ProviderScope(
+      overrides: [
+        todoRepositoryProvider.overrideWithValue(TodoRepositoryImpl()),
+      ],
+      child: const App(),
     ),
   );
 }
