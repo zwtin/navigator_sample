@@ -1,4 +1,5 @@
 import 'package:domain/domain.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -6,7 +7,7 @@ class MockTodoRepository extends Mock implements TodoRepository {}
 
 void main() {
   late MockTodoRepository mockRepository;
-  late TodoUseCase useCase;
+  late ProviderContainer container;
 
   final testTodo = Todo(
     id: '1',
@@ -16,19 +17,31 @@ void main() {
 
   setUp(() {
     mockRepository = MockTodoRepository();
-    useCase = TodoUseCase(mockRepository);
+    container = ProviderContainer(
+      overrides: [
+        todoRepositoryProvider.overrideWithValue(mockRepository),
+      ],
+    );
+  });
+
+  tearDown(() {
+    container.dispose();
   });
 
   setUpAll(() {
     registerFallbackValue(testTodo);
   });
 
+  TodoUseCase getUseCase() {
+    return container.read(todoUseCaseProvider('test-key'));
+  }
+
   group('getTodos', () {
     test('リポジトリからTodo一覧を取得できること', () async {
       when(() => mockRepository.getTodos())
           .thenAnswer((_) async => [testTodo]);
 
-      final result = await useCase.getTodos();
+      final result = await getUseCase().getTodos();
 
       expect(result, [testTodo]);
       verify(() => mockRepository.getTodos()).called(1);
@@ -37,7 +50,7 @@ void main() {
     test('空のリストを返せること', () async {
       when(() => mockRepository.getTodos()).thenAnswer((_) async => []);
 
-      final result = await useCase.getTodos();
+      final result = await getUseCase().getTodos();
 
       expect(result, isEmpty);
     });
@@ -48,7 +61,7 @@ void main() {
       when(() => mockRepository.getTodoById('1'))
           .thenAnswer((_) async => testTodo);
 
-      final result = await useCase.getTodoById('1');
+      final result = await getUseCase().getTodoById('1');
 
       expect(result, testTodo);
       verify(() => mockRepository.getTodoById('1')).called(1);
@@ -58,7 +71,7 @@ void main() {
       when(() => mockRepository.getTodoById('999'))
           .thenAnswer((_) async => null);
 
-      final result = await useCase.getTodoById('999');
+      final result = await getUseCase().getTodoById('999');
 
       expect(result, isNull);
     });
@@ -69,7 +82,7 @@ void main() {
       when(() => mockRepository.addTodo(any()))
           .thenAnswer((_) async {});
 
-      await useCase.addTodo(testTodo);
+      await getUseCase().addTodo(testTodo);
 
       verify(() => mockRepository.addTodo(testTodo)).called(1);
     });
@@ -80,7 +93,7 @@ void main() {
       when(() => mockRepository.toggleTodo('1'))
           .thenAnswer((_) async {});
 
-      await useCase.toggleTodo('1');
+      await getUseCase().toggleTodo('1');
 
       verify(() => mockRepository.toggleTodo('1')).called(1);
     });
@@ -91,7 +104,7 @@ void main() {
       when(() => mockRepository.deleteTodo('1'))
           .thenAnswer((_) async {});
 
-      await useCase.deleteTodo('1');
+      await getUseCase().deleteTodo('1');
 
       verify(() => mockRepository.deleteTodo('1')).called(1);
     });
