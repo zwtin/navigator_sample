@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../todo_list/todo_list_view_model.dart';
+import '../view_model/todo_list_view_model.dart';
 
 Future<void> showAddTodoDialog(
     BuildContext context, WidgetRef ref, String viewModelKey) {

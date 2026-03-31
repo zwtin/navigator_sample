@@ -3,8 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import '../add_todo/add_todo_dialog.dart';
-import 'todo_list_view_model.dart';
+import 'add_todo_dialog.dart';
+import '../view_model/todo_list_view_model.dart';
 
 /// TodoList画面のView
 class TodoListPage extends HookConsumerWidget {

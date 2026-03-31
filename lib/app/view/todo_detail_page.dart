@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../domain/entity/todo.dart';
-import '../todo_list/todo_list_view_model.dart';
+import '../view_model/todo_list_view_model.dart';
 
 /// Todo詳細画面
 class TodoDetailPage extends ConsumerWidget {

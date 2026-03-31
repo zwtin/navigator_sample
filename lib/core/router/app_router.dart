@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../presentation/settings/about_page.dart';
-import '../../presentation/settings/licenses_page.dart';
-import '../../presentation/settings/settings_page.dart';
-import '../../presentation/todo_detail/todo_detail_page.dart';
-import '../../presentation/todo_list/todo_list_page.dart';
+import '../../app/view/about_page.dart';
+import '../../app/view/licenses_page.dart';
+import '../../app/view/settings_page.dart';
+import '../../app/view/todo_detail_page.dart';
+import '../../app/view/todo_list_page.dart';
 import 'shell_scaffold.dart';
 
 // 各ブランチ（タブ）専用のNavigatorKey
