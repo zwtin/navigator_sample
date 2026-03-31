@@ -42,7 +42,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: ':id',
                     pageBuilder: (context, state) {
                       final id = state.pathParameters['id']!;
-                      return MaterialPage(child: TodoDetailPage(todoId: id));
+                      final viewModelKey = state.extra as String;
+                      return MaterialPage(
+                        child: TodoDetailPage(
+                          todoId: id,
+                          viewModelKey: viewModelKey,
+                        ),
+                      );
                     },
                   ),
                 ],

@@ -14,6 +14,6 @@ class TodoUseCase {
   Future<void> deleteTodo(String id) => _repository.deleteTodo(id);
 }
 
-final todoUseCaseProvider = Provider(
-  (ref) => TodoUseCase(ref.watch(todoRepositoryProvider)),
+final todoUseCaseProvider = Provider.autoDispose.family<TodoUseCase, String>(
+  (ref, key) => TodoUseCase(ref.watch(todoRepositoryProvider)),
 );

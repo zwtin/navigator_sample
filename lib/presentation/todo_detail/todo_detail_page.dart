@@ -5,17 +5,19 @@ import '../../domain/entity/todo.dart';
 import '../todo_list/todo_list_view_model.dart';
 
 /// Todo詳細画面
-/// - パスパラメータで受け取ったIDでTodoを特定して表示する
-/// - StatefulShellRouteの独立スタックを実演するためのサブルート画面
 class TodoDetailPage extends ConsumerWidget {
-  const TodoDetailPage({super.key, required this.todoId});
+  const TodoDetailPage({
+    super.key,
+    required this.todoId,
+    required this.viewModelKey,
+  });
 
   final String todoId;
+  final String viewModelKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // リストのViewModelが持つ現在のstateからTodoを取得（再fetch不要）
-    final asyncState = ref.watch(todoListViewModelProvider);
+    final asyncState = ref.watch(todoListViewModelProvider(viewModelKey));
 
     return asyncState.when(
       loading: () => Scaffold(
@@ -43,7 +45,6 @@ class TodoDetailPage extends ConsumerWidget {
           appBar: AppBar(
             title: const Text('Todo詳細'),
             actions: [
-              // 削除ボタン
               IconButton(
                 icon: const Icon(Icons.delete_outline),
                 tooltip: '削除',
@@ -67,7 +68,7 @@ class TodoDetailPage extends ConsumerWidget {
                   );
                   if (confirmed == true && context.mounted) {
                     await ref
-                        .read(todoListViewModelProvider.notifier)
+                        .read(todoListViewModelProvider(viewModelKey).notifier)
                         .deleteTodo(todoId);
                     if (context.mounted) context.pop();
                   }
@@ -80,7 +81,6 @@ class TodoDetailPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 完了状態バッジ
                 Row(
                   children: [
                     Icon(
@@ -101,7 +101,6 @@ class TodoDetailPage extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                // タイトル
                 Text(
                   todo.title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -112,13 +111,11 @@ class TodoDetailPage extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: 8),
-                // 作成日
                 Text(
                   '作成日: ${_formatDate(todo.createdAt)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 32),
-                // 完了切替ボタン
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
@@ -127,7 +124,7 @@ class TodoDetailPage extends ConsumerWidget {
                     ),
                     label: Text(todo.isCompleted ? '未完了に戻す' : '完了にする'),
                     onPressed: () => ref
-                        .read(todoListViewModelProvider.notifier)
+                        .read(todoListViewModelProvider(viewModelKey).notifier)
                         .toggleTodo(todoId),
                   ),
                 ),

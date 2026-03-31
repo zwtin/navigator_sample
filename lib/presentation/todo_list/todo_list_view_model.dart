@@ -5,12 +5,12 @@ import '../../domain/usecase/todo_usecase.dart';
 import 'todo_list_state.dart';
 
 /// TodoList画面のViewModel
-class TodoListViewModel extends AsyncNotifier<TodoListState> {
+class TodoListViewModel extends AutoDisposeFamilyAsyncNotifier<TodoListState, String> {
   late final TodoUseCase _todoUseCase;
 
   @override
-  Future<TodoListState> build() async {
-    _todoUseCase = ref.watch(todoUseCaseProvider);
+  Future<TodoListState> build(String key) async {
+    _todoUseCase = ref.watch(todoUseCaseProvider(key));
 
     final todos = await _todoUseCase.getTodos();
     return TodoListState(todos: todos);
@@ -27,7 +27,6 @@ class TodoListViewModel extends AsyncNotifier<TodoListState> {
       createdAt: DateTime.now(),
     );
 
-    // Push-based更新: Loadingにせず即時UIを更新
     state = AsyncData(currentState.copyWith(isLoading: true));
     await _todoUseCase.addTodo(newTodo);
     final todos = await _todoUseCase.getTodos();
@@ -39,7 +38,6 @@ class TodoListViewModel extends AsyncNotifier<TodoListState> {
     final currentState = state.value;
     if (currentState == null) return;
 
-    // 楽観的更新: APIレスポンスを待たずにUIを即時反映
     final updatedTodos = currentState.todos.map((todo) {
       return todo.id == id
           ? todo.copyWith(isCompleted: !todo.isCompleted)
@@ -55,7 +53,6 @@ class TodoListViewModel extends AsyncNotifier<TodoListState> {
     final currentState = state.value;
     if (currentState == null) return;
 
-    // 楽観的更新
     final updatedTodos =
         currentState.todos.where((todo) => todo.id != id).toList();
     state = AsyncData(currentState.copyWith(todos: updatedTodos));
@@ -64,7 +61,7 @@ class TodoListViewModel extends AsyncNotifier<TodoListState> {
   }
 }
 
-final todoListViewModelProvider =
-    AsyncNotifierProvider<TodoListViewModel, TodoListState>(
+final todoListViewModelProvider = AsyncNotifierProvider.autoDispose
+    .family<TodoListViewModel, TodoListState, String>(
   TodoListViewModel.new,
 );

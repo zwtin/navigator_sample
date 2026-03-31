@@ -3,21 +3,21 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../todo_list/todo_list_view_model.dart';
 
-/// Todo追加ダイアログ
-/// flutter_hooksのuseTextEditingController()でコントローラーのライフサイクルを管理
-Future<void> showAddTodoDialog(BuildContext context, WidgetRef ref) {
+Future<void> showAddTodoDialog(
+    BuildContext context, WidgetRef ref, String viewModelKey) {
   return showDialog(
     context: context,
-    builder: (context) => const _AddTodoDialog(),
+    builder: (context) => _AddTodoDialog(viewModelKey: viewModelKey),
   );
 }
 
 class _AddTodoDialog extends HookConsumerWidget {
-  const _AddTodoDialog();
+  const _AddTodoDialog({required this.viewModelKey});
+
+  final String viewModelKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // useTextEditingController: Hookによりウィジェットのライフサイクルとコントローラーを自動連動
     final controller = useTextEditingController();
     final isSubmitting = useState(false);
 
@@ -26,7 +26,9 @@ class _AddTodoDialog extends HookConsumerWidget {
       if (title.isEmpty) return;
 
       isSubmitting.value = true;
-      await ref.read(todoListViewModelProvider.notifier).addTodo(title);
+      await ref
+          .read(todoListViewModelProvider(viewModelKey).notifier)
+          .addTodo(title);
       isSubmitting.value = false;
 
       if (context.mounted) Navigator.of(context).pop();

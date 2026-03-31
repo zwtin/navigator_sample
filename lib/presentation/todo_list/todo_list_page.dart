@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import '../add_todo/add_todo_dialog.dart';
 import 'todo_list_view_model.dart';
 
 /// TodoList画面のView
-/// - HookConsumerWidget: flutter_hooks と Riverpod を両方使えるウィジェット
-/// - Viewはpassiveに徹し、ロジックはすべてViewModelに委譲する
 class TodoListPage extends HookConsumerWidget {
   const TodoListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // AsyncValue<TodoListState>をwatchして、Loading/Error/Dataを宣言的にハンドリング
-    final asyncState = ref.watch(todoListViewModelProvider);
+    final viewModelKey = useMemoized(() => const Uuid().v4());
+    final asyncState = ref.watch(todoListViewModelProvider(viewModelKey));
 
     return Scaffold(
       appBar: AppBar(
@@ -34,9 +34,7 @@ class TodoListPage extends HookConsumerWidget {
         ],
       ),
       body: asyncState.when(
-        // ローディング中はスピナー表示
         loading: () => const Center(child: CircularProgressIndicator()),
-        // エラー時はエラーメッセージとリトライボタンを表示
         error: (error, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -46,13 +44,13 @@ class TodoListPage extends HookConsumerWidget {
               Text('エラーが発生しました\n$error'),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: () => ref.invalidate(todoListViewModelProvider),
+                onPressed: () =>
+                    ref.invalidate(todoListViewModelProvider(viewModelKey)),
                 child: const Text('再読み込み'),
               ),
             ],
           ),
         ),
-        // データ取得完了
         data: (state) {
           if (state.todos.isEmpty) {
             return const Center(
@@ -86,14 +84,14 @@ class TodoListPage extends HookConsumerWidget {
                 ),
                 onDismissed: (_) {
                   ref
-                      .read(todoListViewModelProvider.notifier)
+                      .read(todoListViewModelProvider(viewModelKey).notifier)
                       .deleteTodo(todo.id);
                 },
                 child: ListTile(
                   leading: Checkbox(
                     value: todo.isCompleted,
                     onChanged: (_) => ref
-                        .read(todoListViewModelProvider.notifier)
+                        .read(todoListViewModelProvider(viewModelKey).notifier)
                         .toggleTodo(todo.id),
                   ),
                   title: Text(
@@ -110,7 +108,8 @@ class TodoListPage extends HookConsumerWidget {
                     style: const TextStyle(fontSize: 12),
                   ),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.go('/todos/${todo.id}'),
+                  onTap: () => context.go('/todos/${todo.id}',
+                      extra: viewModelKey),
                 ),
               );
             },
@@ -118,7 +117,7 @@ class TodoListPage extends HookConsumerWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showAddTodoDialog(context, ref),
+        onPressed: () => showAddTodoDialog(context, ref, viewModelKey),
         child: const Icon(Icons.add),
       ),
     );
