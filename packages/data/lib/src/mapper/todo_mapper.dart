@@ -1,4 +1,4 @@
-import '../../domain/entity/todo.dart';
+import 'package:domain/domain.dart';
 import '../dao/todo_dao.dart';
 
 class TodoMapper {

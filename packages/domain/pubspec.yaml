@@ -1,0 +1,13 @@
+name: domain
+publish_to: 'none'
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  freezed_annotation: ^3.1.0
+  hooks_riverpod: ^2.6.1
+
+dev_dependencies:
+  freezed: ^3.0.6
+  build_runner: ^2.4.15

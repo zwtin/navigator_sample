@@ -1,7 +1,6 @@
+import 'package:domain/domain.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import '../../domain/entity/todo.dart';
-import '../../domain/usecase/todo_usecase.dart';
 import '../view_data/todo_list_view_data.dart';
 
 /// TodoList画面のViewModel

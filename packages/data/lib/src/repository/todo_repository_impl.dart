@@ -1,6 +1,5 @@
+import 'package:domain/domain.dart';
 import 'package:uuid/uuid.dart';
-import '../../domain/entity/todo.dart';
-import '../../domain/repository/todo_repository.dart';
 import '../dao/todo_dao.dart';
 import '../mapper/todo_mapper.dart';
 
