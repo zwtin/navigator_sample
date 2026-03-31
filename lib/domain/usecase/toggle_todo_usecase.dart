@@ -1,3 +1,4 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../repository/todo_repository.dart';
 
 /// Todo完了状態切替ユースケース
@@ -8,3 +9,7 @@ class ToggleTodoUseCase {
 
   Future<void> execute(String id) => _repository.toggleTodo(id);
 }
+
+final toggleTodoUseCaseProvider = Provider(
+  (ref) => ToggleTodoUseCase(ref.watch(todoRepositoryProvider)),
+);

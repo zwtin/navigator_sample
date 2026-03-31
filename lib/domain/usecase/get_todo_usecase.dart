@@ -1,3 +1,4 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../entity/todo.dart';
 import '../repository/todo_repository.dart';
 
@@ -9,3 +10,7 @@ class GetTodoUseCase {
 
   Future<Todo?> execute(String id) => _repository.getTodoById(id);
 }
+
+final getTodoUseCaseProvider = Provider(
+  (ref) => GetTodoUseCase(ref.watch(todoRepositoryProvider)),
+);

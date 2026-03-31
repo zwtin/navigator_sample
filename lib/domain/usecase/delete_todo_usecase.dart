@@ -1,3 +1,4 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../repository/todo_repository.dart';
 
 /// Todo削除ユースケース
@@ -8,3 +9,7 @@ class DeleteTodoUseCase {
 
   Future<void> execute(String id) => _repository.deleteTodo(id);
 }
+
+final deleteTodoUseCaseProvider = Provider(
+  (ref) => DeleteTodoUseCase(ref.watch(todoRepositoryProvider)),
+);
