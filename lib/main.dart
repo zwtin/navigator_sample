@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'core/router/app_router.dart';
+import 'app/router/app_router.dart';
 import 'data/repository/todo_repository_impl.dart';
 import 'domain/repository/todo_repository.dart';
 
