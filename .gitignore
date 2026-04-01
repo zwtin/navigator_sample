@@ -63,3 +63,6 @@ app.*.map.json
 # Claude settings
 .claude/settings.local.json
 
+# FVM
+.fvm/
+

@@ -12,9 +12,6 @@ part of 'todo_dao.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-TodoDAO _$TodoDAOFromJson(Map<String, dynamic> json) {
-  return _TodoDAO.fromJson(json);
-}
 
 /// @nodoc
 mixin _$TodoDAO {
@@ -134,7 +131,9 @@ class _TodoDAO implements TodoDAO {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$TodoDAOToJson(this);
+    return _$TodoDAOToJson(
+      this,
+    );
   }
 
   @override
@@ -162,10 +161,8 @@ class _TodoDAO implements TodoDAO {
 }
 
 /// @nodoc
-abstract mixin class _$TodoDAOCopyWith<$Res>
-    implements $TodoDAOCopyWith<$Res> {
-  factory _$TodoDAOCopyWith(
-          _TodoDAO value, $Res Function(_TodoDAO) _then) =
+abstract mixin class _$TodoDAOCopyWith<$Res> implements $TodoDAOCopyWith<$Res> {
+  factory _$TodoDAOCopyWith(_TodoDAO value, $Res Function(_TodoDAO) _then) =
       __$TodoDAOCopyWithImpl;
   @override
   @useResult
